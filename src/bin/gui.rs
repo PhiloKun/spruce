@@ -36,7 +36,9 @@ fn main() -> eframe::Result<()> {
     eframe::run_native(
         "Spruce",
         options,
-        Box::new(|_cc| Ok(Box::new(SpruceApp::default()))),
+        Box::new(|_cc| {
+            Ok(Box::new(SpruceApp::default()))
+        }),
     )
 }
 
@@ -464,18 +466,27 @@ impl eframe::App for SpruceApp {
 }
 
 fn apply_theme(ui: &mut egui::Ui) {
-    let mut style = (*ui.ctx().style_of(Theme::Light)).clone();
-    style.visuals.dark_mode = true;
-    style.visuals.window_fill = palette::BASE;
-    style.visuals.panel_fill = palette::BASE;
-    style.visuals.widgets.noninteractive.bg_fill = palette::SURFACE0;
-    style.visuals.widgets.inactive.bg_fill = palette::SURFACE1;
-    style.visuals.widgets.active.bg_fill = palette::SURFACE2;
-    style.visuals.widgets.hovered.bg_fill = palette::SURFACE2;
-    style.visuals.selection.bg_fill = palette::BLUE.gamma_multiply(0.3);
-    style.visuals.selection.stroke.color = palette::BLUE;
-    style.visuals.hyperlink_color = palette::SAPPHIRE;
+    set_dark_theme(ui.ctx());
+}
+
+fn set_dark_theme(ctx: &egui::Context) {
+    // Force dark mode every frame — critical on macOS where initial theme may be light
+    ctx.set_theme(egui::Theme::Dark);
+
+    let mut visuals = egui::Visuals::dark();
+    visuals.window_fill = palette::BASE;
+    visuals.panel_fill = palette::BASE;
+    visuals.widgets.noninteractive.bg_fill = palette::SURFACE0;
+    visuals.widgets.inactive.bg_fill = palette::SURFACE1;
+    visuals.widgets.active.bg_fill = palette::SURFACE2;
+    visuals.widgets.hovered.bg_fill = palette::SURFACE2;
+    visuals.selection.bg_fill = palette::BLUE.gamma_multiply(0.3);
+    visuals.selection.stroke.color = palette::BLUE;
+    visuals.hyperlink_color = palette::SAPPHIRE;
+    ctx.set_visuals_of(egui::Theme::Dark, visuals);
+
+    let mut style = (*ctx.style_of(Theme::Dark)).clone();
     style.spacing.item_spacing = egui::vec2(8.0, 4.0);
     style.spacing.button_padding = egui::vec2(10.0, 3.0);
-    ui.ctx().set_style_of(Theme::Dark, style);
+    ctx.set_style_of(Theme::Dark, style);
 }
