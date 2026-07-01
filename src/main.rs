@@ -1,10 +1,8 @@
 mod cli;
-mod format;
-mod highlight;
-mod query;
 
 use clap::Parser;
 use colored::Colorize;
+use spruce::{format, query};
 use std::process;
 
 fn main() {
